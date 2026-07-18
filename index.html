@@ -564,6 +564,7 @@ async function loadData(){
     const { json, sha } = await ghGetFile();
     if(json){
       DATA = json; DATA_SHA = sha;
+      backfillMissingKeys();
     }else{
       // まだファイルが無い場合は、既定の内容をひとまず表示する。
       // 実際にリポジトリへ保存されるのは、誰かが最初に編集を保存した時。
@@ -583,6 +584,20 @@ async function loadData(){
     showBanner('GitHubからの読み込みに失敗しました（'+(e.message||'')+'）。owner/repoの設定をご確認ください。表示中の内容は保存されません。');
   }
   Object.values(DATA).flat().forEach(ev=>{ if(!ev.id) ev.id = uid(); });
+}
+
+// 過去に保存されたデータに、後から追加された項目（notesなど）が無い場合に補う
+function backfillMissingKeys(){
+  let changed = false;
+  Object.keys(DEFAULT_DATA).forEach(key=>{
+    if(!Array.isArray(DATA[key])){
+      DATA[key] = JSON.parse(JSON.stringify(DEFAULT_DATA[key])).map(item=>({...item, id:uid()}));
+      changed = true;
+    }
+  });
+  if(changed && hasToken()){
+    saveData('データ形式の更新（新機能の項目を補完）').catch(e=>console.error(e));
+  }
 }
 
 async function saveData(message){
