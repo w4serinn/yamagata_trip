@@ -20,6 +20,7 @@
 
 *{box-sizing:border-box; margin:0; padding:0;}
 html{scroll-behavior:smooth;}
+html, body{ overflow-x:hidden; width:100%; }
 body{
   background:var(--kinari);
   color:var(--sumi);
@@ -110,6 +111,7 @@ main{ max-width:760px; margin:0 auto; padding: 0 1.4rem 2rem; position:relative;
   transition:transform .15s ease, box-shadow .15s ease;
 }
 .map-cta:hover, .map-cta:focus-visible{ transform:translateY(-2px); box-shadow:0 8px 20px rgba(190,75,46,.45); }
+.map-cta.disabled{ opacity:.45; pointer-events:none; box-shadow:none; }
 .map-cta .seal{
   width:1.5em; height:1.5em; border-radius:50%; border:2px solid var(--kinari);
   display:flex; align-items:center; justify-content:center; font-family:'Shippori Mincho B1',serif; font-size:.85em;
@@ -165,6 +167,9 @@ main{ max-width:760px; margin:0 auto; padding: 0 1.4rem 2rem; position:relative;
 .add-form.open{ display:grid; }
 .add-form label{ font-size:.74rem; font-weight:700; color:var(--ai); display:block; margin-bottom:.3rem; }
 .add-form .form-title{ font-family:'Shippori Mincho B1',serif; font-size:1.05rem; color:var(--ai); margin-bottom:.2rem; }
+.time-row{ display:flex; align-items:center; gap:.5rem; }
+.time-row select{ flex:1; min-width:0; }
+.time-row .time-sep{ color:var(--ginnezu); font-weight:700; flex-shrink:0; }
 .add-form input, .add-form select, .add-form textarea{
   width:100%; font-family:inherit; font-size:.86rem; padding:.5em .6em;
   border:1px solid var(--ginnezu); border-radius:6px; background:var(--kinari);
@@ -186,14 +191,19 @@ main{ max-width:760px; margin:0 auto; padding: 0 1.4rem 2rem; position:relative;
 /* history drawer */
 .hist-overlay{
   position:fixed; inset:0; background:rgba(16,26,46,.55); z-index:90;
-  display:none; align-items:flex-end; justify-content:center;
+  display:none; align-items:center; justify-content:center;
+  overflow:hidden; padding:5vh 1.2rem;
+  box-sizing:border-box;
 }
 .hist-overlay.open{ display:flex; }
 .hist-panel{
-  background:var(--kinari); width:100%; max-width:640px; max-height:78vh;
-  border-radius:16px 16px 0 0; padding:1.4rem 1.4rem 2rem; overflow-y:auto;
-  animation: slideup .25s ease;
+  background:var(--kinari); width:100%; max-width:640px;
+  border-radius:16px; padding:1.4rem 1.4rem 1.8rem; overflow-y:auto; overflow-x:hidden;
+  box-sizing:border-box; margin:auto;
+  box-shadow:0 20px 60px rgba(16,26,46,.4);
+  animation: popin .2s ease;
 }
+@keyframes popin{ from{ transform:scale(.96); opacity:0;} to{ transform:scale(1); opacity:1;} }
 @keyframes slideup{ from{ transform:translateY(30px); opacity:0;} to{ transform:translateY(0); opacity:1;} }
 .hist-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; }
 .hist-head h3{ font-family:'Shippori Mincho B1',serif; font-size:1.15rem; }
@@ -208,6 +218,15 @@ main{ max-width:760px; margin:0 auto; padding: 0 1.4rem 2rem; position:relative;
 .hist-list .h-add{ color:var(--wakatake); font-weight:700; }
 .hist-list .h-del{ color:var(--bengara); font-weight:700; }
 .hist-empty{ color:var(--ginnezu); font-size:.85rem; text-align:center; padding:2rem 0; }
+
+.token-msg{ font-size:.85rem; margin-bottom:1rem; color:var(--sumi); line-height:1.6; }
+.token-input{
+  width:100%; font-family:inherit; font-size:.86rem; padding:.6em .8em;
+  border:1px solid var(--ginnezu); border-radius:8px; background:#fff; margin-bottom:1rem;
+}
+.token-actions{ display:flex; gap:.6rem; justify-content:flex-end; }
+.token-help{ font-size:.76rem; color:var(--ginnezu); margin-top:1.2rem; line-height:1.7; }
+.token-help a{ color:var(--bengara); font-weight:700; }
 
 .config-banner{
   display:none; background:#5A2A1E; color:#F6E7DE; font-size:.82rem;
@@ -260,6 +279,7 @@ footer{ text-align:center; font-size:.78rem; color:var(--ginnezu); padding:2rem 
   <a href="#day3">三日目 8/10</a>
   <span id="savingIndicator" class="saving-indicator">保存中…</span>
   <input id="authorName" class="author-name" type="text" placeholder="あなたの名前（任意）">
+  <button class="hist-btn" id="openToken" type="button">🔑 トークン</button>
   <button class="hist-btn" id="openHist" type="button">変更履歴</button>
 </nav>
 
@@ -271,9 +291,8 @@ footer{ text-align:center; font-size:.78rem; color:var(--ginnezu); padding:2rem 
       <div class="day-num serif">一</div>
       <div><h2>8月8日（土）</h2><div class="day-route">米沢 → 天童温泉</div></div>
     </div>
-    <a class="map-cta" target="_blank" rel="noopener"
-       href="https://www.google.com/maps/dir/?api=1&origin=37.9096375,140.1281069&destination=38.3594017,140.3821411&waypoints=37.9149626,140.1118421|37.9092616,140.1041694|38.3131193,140.4346099&travelmode=driving">
-      <span class="seal">図</span> 本日のドライブルートを見る（米沢駅→天童ホテル）
+    <a class="map-cta" id="map-cta-day1" target="_blank" rel="noopener" href="#">
+      <span class="seal">図</span> <span class="map-cta-label">本日のドライブルートを見る</span>
     </a>
     <ol class="timeline" id="list-day1"></ol>
     <div class="add-wrap">
@@ -288,9 +307,8 @@ footer{ text-align:center; font-size:.78rem; color:var(--ginnezu); padding:2rem 
       <div class="day-num serif">二</div>
       <div><h2>8月9日（日）</h2><div class="day-route">天童 → 酒田</div></div>
     </div>
-    <a class="map-cta" target="_blank" rel="noopener"
-       href="https://www.google.com/maps/dir/?api=1&origin=38.3594017,140.3821411&destination=38.913597,139.834965&waypoints=38.7616566,139.7246678|38.9108912,139.8369957|38.9190069,139.8280483&travelmode=driving">
-      <span class="seal">図</span> 本日のドライブルートを見る（天童ホテル→地蔵の湯旅館）
+    <a class="map-cta" id="map-cta-day2" target="_blank" rel="noopener" href="#">
+      <span class="seal">図</span> <span class="map-cta-label">本日のドライブルートを見る</span>
     </a>
     <ol class="timeline" id="list-day2"></ol>
     <div class="add-wrap">
@@ -305,9 +323,8 @@ footer{ text-align:center; font-size:.78rem; color:var(--ginnezu); padding:2rem 
       <div class="day-num serif">三</div>
       <div><h2>8月10日（月）</h2><div class="day-route">酒田 → 山形空港</div></div>
     </div>
-    <a class="map-cta" target="_blank" rel="noopener"
-       href="https://www.google.com/maps/dir/?api=1&origin=38.913597,139.834965&destination=38.4122393,140.3703441&waypoints=38.7860473,140.0268917|38.7667272,140.0565879|38.7379836,140.1498384&travelmode=driving">
-      <span class="seal">図</span> 本日のドライブルートを見る（地蔵の湯旅館→山形空港）
+    <a class="map-cta" id="map-cta-day3" target="_blank" rel="noopener" href="#">
+      <span class="seal">図</span> <span class="map-cta-label">本日のドライブルートを見る</span>
     </a>
     <ol class="timeline" id="list-day3"></ol>
     <div class="add-wrap">
@@ -325,6 +342,7 @@ footer{ text-align:center; font-size:.78rem; color:var(--ginnezu); padding:2rem 
       <li>酒田市内のグルメ・観光は<a href="https://sakata-kankou.com/spot" target="_blank" rel="noopener" style="color:#F0DFC8; font-weight:700;">酒田さんぽ</a>を見ながら当日決定。</li>
       <li>宿近くの酒屋メモ：十四代 木川屋商店 新橋本店（地蔵の湯旅館から車で約5分）。</li>
       <li>この予定表はメンバー全員で追加・削除できます。右上「変更履歴」から編集ログを確認できます。</li>
+      <li>「本日のドライブルートを見る」は、その日の予定リストから自動で組み立てられます。予定の「内容」欄には、文章ではなく<strong>施設名・店名</strong>（例：「上杉神社」「こい勢」）で入力すると、ルート検索に正しく反映されます。</li>
     </ul>
   </section>
 
@@ -343,47 +361,83 @@ footer{ text-align:center; font-size:.78rem; color:var(--ginnezu); padding:2rem 
   </div>
 </div>
 
+<!-- Token drawer -->
+<div class="hist-overlay" id="tokenOverlay">
+  <div class="hist-panel">
+    <div class="hist-head">
+      <h3 class="serif">編集用トークン</h3>
+      <button id="closeToken" type="button" aria-label="閉じる">×</button>
+    </div>
+    <p class="token-msg" id="tokenMsg"></p>
+    <input id="tokenInput" class="token-input" type="password" placeholder="github_pat_ から始まるトークンを貼り付け">
+    <div class="token-actions">
+      <button id="tokenCancel" class="btn-cancel" type="button">キャンセル</button>
+      <button id="tokenSave" class="btn-save" type="button">保存する</button>
+    </div>
+    <p class="token-help">
+      トークンをお持ちでない場合は、旅行の主催者から受け取るか、
+      <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">こちら</a>
+      から発行してください（Repository access：このリポジトリのみ／Permissions：Contents を Read and write）。<br>
+      入力したトークンは<strong>このブラウザにだけ</strong>保存され、他の人には見えません。
+    </p>
+  </div>
+</div>
+
 <script>
 /* ============================================================
    GitHub連携の設定
    ------------------------------------------------------------
    1. GitHubで公開リポジトリを新規作成（例：yamagata-trip）
-   2. Settings > Developer settings > Fine-grained personal access tokens
-      で新規トークンを発行。
-        - Repository access: 「Only select repositories」→ 上記リポジトリのみ選択
-        - Permissions: 「Contents」を Read and write に設定
-      （これ以外の権限は付けない。他のリポジトリには一切アクセスできないトークンになります）
-      ※このトークンはページのソースコードに埋め込まれるため、誰でも閲覧できます。
-        漏洩しても「このリポジトリの中身を読み書きされる」以上の影響はありません。
-   3. 下の owner / repo / token を書き換える
-   4. このファイルを index.html としてリポジトリ直下にコミット
-   5. Settings > Pages で Source を「main branch / root」に設定して公開
+   2. 下の owner / repo を書き換える（これらは秘密情報ではないので
+      コードに書いても問題ありません。トークンはここには書きません）
+   3. このファイルを index.html としてリポジトリ直下にコミット
+   4. Settings > Pages で Source を「main branch / root」に設定して公開
+   5. 「見るだけ」の人はここまでで完了です。
+
+   編集したい人は、サイト右上の 🔑 ボタンから、各自で発行した
+   トークンを自分のブラウザにだけ保存します（コードには書きません）：
+     Settings > Developer settings > Fine-grained personal access tokens
+       - Repository access: 「Only select repositories」→ このリポジトリのみ
+       - Permissions: 「Contents」を Read and write に設定
    ============================================================ */
 const GH = {
   owner: 'w4serinn',   // 例: 'taro-yamada'
   repo: 'yamagata_trip',         // 例: 'yamagata-trip'
   branch: 'main',
-  token: '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',// 例: 'github_pat_xxxxxxxx'
   dataPath: 'itinerary-data.json',
 };
 function ghConfigured(){
-  return GH.owner!=='YOUR_GITHUB_USERNAME' && GH.token!=='YOUR_FINE_GRAINED_TOKEN' && GH.token.length>10;
+  return GH.owner!=='YOUR_GITHUB_USERNAME' && GH.repo!=='YOUR_REPO_NAME';
 }
 function ghApiBase(){ return `https://api.github.com/repos/${GH.owner}/${GH.repo}`; }
-function authHeaders(){ return { Authorization:`token ${GH.token}`, Accept:'application/vnd.github+json' }; }
+
+function getToken(){ return localStorage.getItem('gh-edit-token') || ''; }
+function setToken(t){ localStorage.setItem('gh-edit-token', (t||'').trim()); }
+function hasToken(){ return getToken().length > 10; }
+function authHeaders(){
+  const h = { Accept:'application/vnd.github+json' };
+  const t = getToken();
+  if(t) h.Authorization = `token ${t}`;
+  return h;
+}
 
 async function ghGetFile(){
+  // 読み取りはトークン無しでも動作（公開リポジトリのため）
   const res = await fetch(`${ghApiBase()}/contents/${GH.dataPath}?ref=${GH.branch}&t=${Date.now()}`, {
     headers: authHeaders()
   });
   if(res.status===404) return { json:null, sha:null };
-  if(!res.ok) throw new Error('GitHub read failed: '+res.status);
+  if(!res.ok){
+    const body = await res.text().catch(()=>'');
+    throw new Error(`${res.status}: ${body.slice(0,200)}`);
+  }
   const body = await res.json();
   const text = decodeURIComponent(escape(atob(body.content.replace(/\n/g,''))));
   return { json: JSON.parse(text), sha: body.sha };
 }
 
 async function ghPutFile(obj, sha, message){
+  if(!hasToken()) throw new Error('NO_TOKEN');
   const content = btoa(unescape(encodeURIComponent(JSON.stringify(obj, null, 2))));
   const body = { message, content, branch: GH.branch };
   if(sha) body.sha = sha;
@@ -392,7 +446,14 @@ async function ghPutFile(obj, sha, message){
     headers:{ ...authHeaders(), 'Content-Type':'application/json' },
     body: JSON.stringify(body)
   });
-  if(!res.ok){ const t = await res.text(); throw new Error('GitHub write failed: '+res.status+' '+t); }
+  if(res.status===401 || res.status===403){
+    setToken('');
+    throw new Error('BAD_TOKEN');
+  }
+  if(!res.ok){
+    const t = await res.text().catch(()=>'');
+    throw new Error(`${res.status}: ${t.slice(0,200)}`);
+  }
   return res.json();
 }
 
@@ -432,7 +493,7 @@ const DEFAULT_DATA = {
     {time:'13:30〜14:30', tag:'meal', title:'酒田市内で昼食', note:'<a href="https://sakata-kankou.com/spot" target="_blank" rel="noopener">酒田さんぽ</a>で当日調べて決める。'},
     {time:'14:30〜15:15', tag:'sight', title:'山居倉庫', note:'明治期の米蔵。酒田のシンボル。（確定）'},
     {time:'15:15〜16:00', tag:'sight', title:'日和山公園', note:'日本海を望む高台の公園。灯台や北前船の展示。（確定）'},
-    {time:'16:00〜16:20', tag:'shop', title:'十四代 木川屋商店 新橋本店でお酒を購入', note:'チェックイン前後に立ち寄り。地蔵の湯旅館から車で約5分の酒屋。'},
+    {time:'16:00〜16:20', tag:'shop', title:'十四代 木川屋商店 新橋本店', note:'お酒を購入。チェックイン前後に立ち寄り。地蔵の湯旅館から車で約5分の酒屋。'},
     {time:'16:30頃', tag:'stay', title:'地蔵の湯旅館 チェックイン', note:'2泊目。レンタカーはここに駐車し、以降は徒歩で移動。'},
     {time:'19:00', tag:'meal', title:'こい勢', note:'寿司。'},
   ],
@@ -464,33 +525,56 @@ async function loadData(){
   }
   try{
     const { json, sha } = await ghGetFile();
-    if(json){ DATA = json; DATA_SHA = sha; }
-    else{
+    if(json){
+      DATA = json; DATA_SHA = sha;
+    }else{
+      // まだファイルが無い場合は、既定の内容をひとまず表示する。
+      // 実際にリポジトリへ保存されるのは、誰かが最初に編集を保存した時。
       DATA = JSON.parse(JSON.stringify(DEFAULT_DATA));
       Object.values(DATA).flat().forEach(ev=>ev.id=uid());
-      const res = await ghPutFile(DATA, null, '初期化: 旅程データを作成');
-      DATA_SHA = res.content.sha;
+      if(hasToken()){
+        try{
+          const res = await ghPutFile(DATA, null, '初期化: 旅程データを作成');
+          DATA_SHA = res.content.sha;
+        }catch(e){ console.error('init save failed', e); }
+      }
     }
   }catch(e){
     console.error(e);
     DATA = JSON.parse(JSON.stringify(DEFAULT_DATA));
     Object.values(DATA).flat().forEach(ev=>ev.id=uid());
-    showBanner('GitHubへの接続に失敗しました。設定（owner/repo/token）をご確認ください。表示中の内容は保存されません。');
+    showBanner('GitHubからの読み込みに失敗しました（'+(e.message||'')+'）。owner/repoの設定をご確認ください。表示中の内容は保存されません。');
   }
   Object.values(DATA).flat().forEach(ev=>{ if(!ev.id) ev.id = uid(); });
 }
 
 async function saveData(message){
-  if(!ghConfigured()) return;
+  if(!ghConfigured()) return false;
+  if(!hasToken()){
+    openTokenModal('編集を保存するには、あなた自身の編集用トークンが必要です。まだ発行していない場合は下のリンクから発行してください。');
+    return false;
+  }
   SAVING = true; updateSavingIndicator();
+  let ok = true;
   try{
     const res = await ghPutFile(DATA, DATA_SHA, message);
     DATA_SHA = res.content.sha;
   }catch(e){
+    ok = false;
     console.error(e);
-    alert('保存に失敗しました。他の人と同時に編集した可能性があります。ページを再読み込みしてから、もう一度お試しください。');
+    const msg = e.message || '';
+    if(msg==='BAD_TOKEN'){
+      openTokenModal('トークンが無効になっていました（失効・権限不足など）。お手数ですが新しく発行し直して、下に貼り直してください。');
+    }else if(msg.startsWith('409')){
+      alert('保存に失敗しました：他の人と同時に編集した可能性があります。ページを再読み込みしてから、もう一度お試しください。');
+    }else if(msg.startsWith('404')){
+      alert('保存に失敗しました：リポジトリまたはファイルが見つかりません。owner/repoの設定をご確認ください。\n\n詳細: '+msg);
+    }else{
+      alert('保存に失敗しました。\n\n詳細: '+msg);
+    }
   }
   SAVING = false; updateSavingIndicator();
+  return ok;
 }
 
 function updateSavingIndicator(){
@@ -534,24 +618,75 @@ function renderDay(dayKey){
 
 function renderAll(){
   Object.keys(DATA).forEach(renderDay);
+  Object.keys(DATA).forEach(updateMapLink);
+}
+
+function updateMapLink(dayKey){
+  const link = document.getElementById('map-cta-'+dayKey);
+  if(!link) return;
+  const events = DATA[dayKey] || [];
+  const label = link.querySelector('.map-cta-label');
+  if(events.length < 2){
+    link.href = '#';
+    link.classList.add('disabled');
+    if(label) label.textContent = '本日のドライブルートを見る（予定が2件以上必要です）';
+    return;
+  }
+  link.classList.remove('disabled');
+  const points = events.map(ev=>encodeURIComponent(ev.title));
+  const origin = points[0];
+  const destination = points[points.length-1];
+  const waypoints = points.slice(1, -1).slice(0, 8); // Googleマップの実用的な経由地の上限に配慮
+  let url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}&travelmode=driving`;
+  if(waypoints.length) url += `&waypoints=${waypoints.join('|')}`;
+  link.href = url;
+  if(label) label.textContent = `本日のドライブルートを見る（${events[0].title}→${events[events.length-1].title}）`;
 }
 
 async function removeEvent(dayKey, id){
   const ev = DATA[dayKey].find(e=>e.id===id);
   if(!ev) return;
   if(!confirm(`「${ev.title}」を削除しますか？`)) return;
+  const snapshot = DATA[dayKey];
   DATA[dayKey] = DATA[dayKey].filter(e=>e.id!==id);
   const who = myName();
-  await saveData(`削除${who?'('+who+')':''}: 「${ev.title}」(${DAY_LABEL[dayKey]})`);
+  const ok = await saveData(`削除${who?'('+who+')':''}: 「${ev.title}」(${DAY_LABEL[dayKey]})`);
+  if(!ok){ DATA[dayKey] = snapshot; return; }
   renderDay(dayKey);
+  updateMapLink(dayKey);
   await loadHistory();
   renderHistory();
 }
+
+function pad2(n){ return String(n).padStart(2,'0'); }
+
+function timeOptions(selected, emptyLabel){
+  const opts = [];
+  if(emptyLabel !== null) opts.push({v:'', label:emptyLabel});
+  const isGrid = /^([0-1][0-9]|2[0-3]):(00|15|30|45)$/.test(selected||'');
+  if(selected && !isGrid) opts.push({v:selected, label:selected+'（現在の値）'});
+  for(let h=0; h<24; h++){
+    for(let m=0; m<60; m+=15){
+      const v = pad2(h)+':'+pad2(m);
+      opts.push({v, label:v});
+    }
+  }
+  return opts.map(o=>`<option value="${o.v}" ${o.v===selected?'selected':''}>${o.label}</option>`).join('');
+}
+
+function escapeAttr(s){ return String(s).replace(/"/g,'&quot;'); }
 
 function buildForm(dayKey, editId){
   const wrap = document.querySelector(`.add-form[data-day="${dayKey}"]`);
   const editing = !!editId;
   const ev = editing ? DATA[dayKey].find(e=>e.id===editId) : null;
+
+  let startVal='', endVal='';
+  if(ev){
+    const parts = ev.time.split('〜');
+    startVal = (parts[0]||'').trim();
+    endVal = (parts[1]||'').trim();
+  }
 
   const options = DATA[dayKey].map((e,i)=>`<option value="${i}">${i+1}. ${e.title} の前に挿入</option>`).join('');
   const posField = editing ? '' : `
@@ -564,7 +699,13 @@ function buildForm(dayKey, editId){
 
   wrap.innerHTML = `
     ${editing ? '<div class="full form-title">予定を編集</div>' : ''}
-    <div><label>時刻</label><input type="text" class="f-time" placeholder="例）14:30〜15:00" value="${ev?escapeAttr(ev.time):''}"></div>
+    <div class="full"><label>時刻</label>
+      <div class="time-row">
+        <select class="f-time-start">${timeOptions(startVal, '開始')}</select>
+        <span class="time-sep">〜</span>
+        <select class="f-time-end">${timeOptions(endVal, '終了（任意）')}</select>
+      </div>
+    </div>
     <div><label>タグ</label>
       <select class="f-tag">
         <option value="sight">観光</option>
@@ -575,7 +716,7 @@ function buildForm(dayKey, editId){
         <option value="free">自由</option>
       </select>
     </div>
-    <div class="full"><label>内容</label><input type="text" class="f-title" placeholder="例）〇〇神社にお参り" value="${ev?escapeAttr(ev.title):''}"></div>
+    <div><label>内容（施設名・店名で入力するとルートに反映されます）</label><input type="text" class="f-title" placeholder="例）上杉神社" value="${ev?escapeAttr(ev.title):''}"></div>
     <div class="full"><label>メモ（任意）</label><textarea class="f-note" rows="2" placeholder="補足があれば">${ev?ev.note||'':''}</textarea></div>
     ${posField}
     <div class="actions">
@@ -591,8 +732,6 @@ function buildForm(dayKey, editId){
   });
 }
 
-function escapeAttr(s){ return String(s).replace(/"/g,'&quot;'); }
-
 function toggleForm(dayKey, open, editId){
   const wrap = document.querySelector(`.add-form[data-day="${dayKey}"]`);
   if(open){
@@ -606,17 +745,22 @@ function toggleForm(dayKey, open, editId){
 
 async function submitAdd(dayKey){
   const wrap = document.querySelector(`.add-form[data-day="${dayKey}"]`);
-  const time = wrap.querySelector('.f-time').value.trim() || '未定';
+  const start = wrap.querySelector('.f-time-start').value;
+  const end = wrap.querySelector('.f-time-end').value;
   const title = wrap.querySelector('.f-title').value.trim();
   const tag = wrap.querySelector('.f-tag').value;
   const note = wrap.querySelector('.f-note').value.trim();
   const pos = parseInt(wrap.querySelector('.f-pos').value, 10);
+  if(!start){ alert('開始時刻を選択してください'); return; }
   if(!title){ alert('内容を入力してください'); return; }
+  const time = (end && end!==start) ? `${start}〜${end}` : start;
   const ev = {id:uid(), time, tag, title, note};
   DATA[dayKey].splice(pos, 0, ev);
   const who = myName();
-  await saveData(`追加${who?'('+who+')':''}: 「${title}」(${DAY_LABEL[dayKey]})`);
+  const ok = await saveData(`追加${who?'('+who+')':''}: 「${title}」(${DAY_LABEL[dayKey]})`);
+  if(!ok){ DATA[dayKey].splice(DATA[dayKey].indexOf(ev), 1); return; }
   renderDay(dayKey);
+  updateMapLink(dayKey);
   toggleForm(dayKey, false);
   await loadHistory();
   renderHistory();
@@ -626,15 +770,21 @@ async function submitEdit(dayKey, id){
   const wrap = document.querySelector(`.add-form[data-day="${dayKey}"]`);
   const ev = DATA[dayKey].find(e=>e.id===id);
   if(!ev) return;
-  const time = wrap.querySelector('.f-time').value.trim() || '未定';
+  const start = wrap.querySelector('.f-time-start').value;
+  const end = wrap.querySelector('.f-time-end').value;
   const title = wrap.querySelector('.f-title').value.trim();
   const tag = wrap.querySelector('.f-tag').value;
   const note = wrap.querySelector('.f-note').value.trim();
+  if(!start){ alert('開始時刻を選択してください'); return; }
   if(!title){ alert('内容を入力してください'); return; }
+  const time = (end && end!==start) ? `${start}〜${end}` : start;
+  const before = { time: ev.time, title: ev.title, tag: ev.tag, note: ev.note };
   ev.time = time; ev.title = title; ev.tag = tag; ev.note = note;
   const who = myName();
-  await saveData(`編集${who?'('+who+')':''}: 「${title}」(${DAY_LABEL[dayKey]})`);
+  const ok = await saveData(`編集${who?'('+who+')':''}: 「${title}」(${DAY_LABEL[dayKey]})`);
+  if(!ok){ Object.assign(ev, before); return; }
   renderDay(dayKey);
+  updateMapLink(dayKey);
   toggleForm(dayKey, false);
   await loadHistory();
   renderHistory();
@@ -677,9 +827,19 @@ document.querySelectorAll('.add-toggle').forEach(btn=>{
   });
 });
 
+function fitPanels(){
+  const vh = (window.visualViewport ? window.visualViewport.height : window.innerHeight);
+  const h = Math.max(200, Math.round(vh * 0.7));
+  document.querySelectorAll('.hist-panel').forEach(p=>{ p.style.maxHeight = h+'px'; });
+}
+window.addEventListener('resize', fitPanels);
+if(window.visualViewport) window.visualViewport.addEventListener('resize', fitPanels);
+
 document.getElementById('openHist').addEventListener('click', ()=>{
+  if(document.activeElement && document.activeElement.blur) document.activeElement.blur();
   renderHistory();
-  document.getElementById('histOverlay').classList.add('open');
+  fitPanels();
+  setTimeout(()=>{ fitPanels(); document.getElementById('histOverlay').classList.add('open'); }, 50);
 });
 document.getElementById('closeHist').addEventListener('click', ()=>{
   document.getElementById('histOverlay').classList.remove('open');
@@ -688,9 +848,39 @@ document.getElementById('histOverlay').addEventListener('click', (e)=>{
   if(e.target.id==='histOverlay') e.currentTarget.classList.remove('open');
 });
 
+function openTokenModal(msg){
+  if(document.activeElement && document.activeElement.blur) document.activeElement.blur();
+  document.getElementById('tokenMsg').textContent = msg || (hasToken()
+    ? 'トークンは設定済みです。変更する場合は貼り直して保存してください。'
+    : 'このブラウザにはまだ編集用トークンが設定されていません。編集（追加・削除・変更）を保存するには必要です。');
+  document.getElementById('tokenInput').value='';
+  fitPanels();
+  setTimeout(()=>{
+    fitPanels();
+    document.getElementById('tokenOverlay').classList.add('open');
+    document.getElementById('tokenInput').focus();
+  }, 50);
+}
+function closeTokenModal(){
+  document.getElementById('tokenOverlay').classList.remove('open');
+}
+document.getElementById('openToken').addEventListener('click', ()=>openTokenModal());
+document.getElementById('closeToken').addEventListener('click', closeTokenModal);
+document.getElementById('tokenCancel').addEventListener('click', closeTokenModal);
+document.getElementById('tokenOverlay').addEventListener('click', (e)=>{
+  if(e.target.id==='tokenOverlay') closeTokenModal();
+});
+document.getElementById('tokenSave').addEventListener('click', ()=>{
+  const v = document.getElementById('tokenInput').value.trim();
+  if(v.length<10){ alert('トークンを入力してください'); return; }
+  setToken(v);
+  closeTokenModal();
+  alert('保存しました。さきほどの追加・編集・削除の操作をもう一度お試しください。');
+});
+
 (async function init(){
   if(!ghConfigured()){
-    showBanner('⚠ GitHub連携が未設定です。今表示されているのはサンプル内容で、編集は保存されません。スクリプト内の GH の owner / repo / token を設定してください。');
+    showBanner('⚠ GitHub連携が未設定です。今表示されているのはサンプル内容で、編集は保存されません。スクリプト内の GH の owner / repo を設定してください。');
   }
   const nameInput = document.getElementById('authorName');
   if(nameInput){
