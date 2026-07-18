@@ -186,7 +186,8 @@ main{ max-width:760px; margin:0 auto; padding: 0 1.4rem 2rem; position:relative;
 .notes ul{ list-style:none; }
 .notes li{ font-size:.86rem; padding:.55rem 0; border-top:1px solid rgba(246,240,228,.15); display:flex; gap:.6em; }
 .notes li:first-child{ border-top:none; }
-.notes li::before{ content:"·"; color:var(--bengara); font-weight:900; font-size:1.2em; line-height:1;}
+.notes li::before{ content:"·"; color:var(--bengara); font-weight:900; font-size:1.2em; line-height:1; flex-shrink:0; }
+.notes li span{ min-width:0; flex:1; }
 
 /* history drawer */
 .hist-overlay{
@@ -336,13 +337,13 @@ footer{ text-align:center; font-size:.78rem; color:var(--ginnezu); padding:2rem 
   <section class="notes">
     <h3 class="serif">旅のメモ</h3>
     <ul>
-      <li>山寺・加茂水族館・舟下りは天候や混雑で所要時間が前後する可能性あり。時間には余裕を持って。</li>
-      <li>舟下り「義経ロマン観光」は要予約（0234-57-2148）。運航状況は前日〜当日に確認。</li>
-      <li>天童ホテルの無料送迎（JR天童駅⇔ホテル）は前日までの要予約。今回はレンタカーのため利用なし。</li>
-      <li>酒田市内のグルメ・観光は<a href="https://sakata-kankou.com/spot" target="_blank" rel="noopener" style="color:#F0DFC8; font-weight:700;">酒田さんぽ</a>を見ながら当日決定。</li>
-      <li>宿近くの酒屋メモ：十四代 木川屋商店 新橋本店（地蔵の湯旅館から車で約5分）。</li>
-      <li>この予定表はメンバー全員で追加・削除できます。右上「変更履歴」から編集ログを確認できます。</li>
-      <li>「本日のドライブルートを見る」は、その日の予定リストから自動で組み立てられます。予定の「内容」欄には、文章ではなく<strong>施設名・店名</strong>（例：「上杉神社」「こい勢」）で入力すると、ルート検索に正しく反映されます。</li>
+      <li><span>山寺・加茂水族館・舟下りは天候や混雑で所要時間が前後する可能性あり。時間には余裕を持って。</span></li>
+      <li><span>舟下り「義経ロマン観光」は要予約（0234-57-2148）。運航状況は前日〜当日に確認。</span></li>
+      <li><span>天童ホテルの無料送迎（JR天童駅⇔ホテル）は前日までの要予約。今回はレンタカーのため利用なし。</span></li>
+      <li><span>酒田市内のグルメ・観光は<a href="https://sakata-kankou.com/spot" target="_blank" rel="noopener" style="color:#F0DFC8; font-weight:700;">酒田さんぽ</a>を見ながら当日決定。</span></li>
+      <li><span>宿近くの酒屋メモ：十四代 木川屋商店 新橋本店（地蔵の湯旅館から車で約5分）。</span></li>
+      <li><span>この予定表はメンバー全員で追加・削除できます。右上「変更履歴」から編集ログを確認できます。</span></li>
+      <li><span>「本日のドライブルートを見る」は、その日の予定リストから自動で組み立てられます。予定の「内容」欄には、文章ではなく<strong>施設名・店名</strong>（例：「上杉神社」「こい勢」）で入力すると、ルート検索に正しく反映されます。</span></li>
     </ul>
   </section>
 
