@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>山形・庄内 ドライブしおり | 8.8-8.10</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@400;600;800&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap');
+
+:root{
+  --ai:#1B2A47;
+  --ai-deep:#101A2E;
+  --kinari:#F6F0E4;
+  --kinari-soft:#EFE7D6;
+  --bengara:#BE4B2E;
+  --wakatake:#4F7A52;
+  --sumi:#262320;
+  --ginnezu:#A79C8C;
+}
+
+*{box-sizing:border-box; margin:0; padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--kinari);
+  color:var(--sumi);
+  font-family:'Zen Kaku Gothic New', sans-serif;
+  line-height:1.75;
+  -webkit-font-smoothing:antialiased;
+}
+.serif{ font-family:'Shippori Mincho B1', serif; }
+
+/* ---------- HERO ---------- */
+.hero{
+  position:relative;
+  background:
+    radial-gradient(ellipse at 20% -10%, rgba(190,75,46,0.35), transparent 55%),
+    linear-gradient(160deg, var(--ai-deep), var(--ai) 70%);
+  color:var(--kinari);
+  padding: clamp(3rem,10vw,5.5rem) 1.5rem clamp(4rem,12vw,6rem);
+  overflow:hidden;
+}
+.hero::after{
+  content:"";
+  position:absolute; inset:0;
+  background-image: radial-gradient(rgba(246,240,228,0.06) 1px, transparent 1px);
+  background-size: 14px 14px;
+  opacity:.5;
+  pointer-events:none;
+}
+.hero-inner{ max-width:720px; margin:0 auto; position:relative; }
+.eyebrow{ font-size:.78rem; letter-spacing:.32em; color:#D8B79A; font-weight:700; margin-bottom:1.1rem; }
+.hero h1{
+  font-family:'Shippori Mincho B1', serif; font-weight:800;
+  font-size:clamp(2.2rem, 7vw, 3.4rem); line-height:1.35; letter-spacing:.02em;
+}
+.hero h1 small{ display:block; font-size:.45em; font-weight:600; color:#C9BBA0; margin-top:.6em; letter-spacing:.12em; }
+.hero-meta{ display:flex; flex-wrap:wrap; gap:.6rem 1.4rem; margin-top:2rem; font-size:.88rem; color:#E4DCC9; }
+.hero-meta div{display:flex; align-items:baseline; gap:.5em;}
+.hero-meta b{ font-family:'Shippori Mincho B1',serif; font-size:1.05em; color:var(--kinari); }
+.route-band{ margin-top:2.6rem; display:flex; align-items:center; gap:.5rem; font-size:.82rem; color:#CBBFA3; flex-wrap:wrap; }
+.route-band .stop{ border:1px solid rgba(246,240,228,.35); border-radius:999px; padding:.35em .95em; white-space:nowrap; }
+.route-band .arrow{ color:var(--bengara); font-weight:900; }
+
+/* ---------- STICKY NAV ---------- */
+.daynav{
+  position:sticky; top:0; z-index:40;
+  background:rgba(246,240,228,.92); backdrop-filter: blur(6px);
+  border-bottom:1px solid var(--ginnezu);
+  display:flex; justify-content:center; gap:0; font-size:.85rem; flex-wrap:wrap;
+}
+.daynav a{
+  color:var(--sumi); text-decoration:none; padding:.9rem 1.1rem; font-weight:700;
+  letter-spacing:.04em; border-bottom:3px solid transparent;
+  transition:border-color .2s, color .2s; white-space:nowrap;
+}
+.daynav a:hover, .daynav a:focus-visible{ color:var(--bengara); border-color:var(--bengara); }
+.daynav .hist-btn{
+  background:none; border:none; cursor:pointer;
+  color:var(--ai); font-weight:700; font-size:.85rem; padding:.9rem 1.1rem;
+  font-family:inherit;
+}
+.daynav .hist-btn:hover{ color:var(--bengara); }
+
+/* ---------- MAIN LAYOUT ---------- */
+main{ max-width:760px; margin:0 auto; padding: 0 1.4rem 2rem; position:relative; }
+
+.day{
+  position:relative; padding: 3.2rem 0 1rem 2.6rem;
+  border-left:3px solid var(--ginnezu); margin-left:.4rem;
+  opacity:0; transform:translateY(18px);
+  transition:opacity .7s ease, transform .7s ease;
+}
+.day.visible{ opacity:1; transform:none; }
+.day:last-of-type{ border-left-color:transparent; }
+
+.day-head{ display:flex; align-items:flex-end; gap:1rem; margin-bottom:1.6rem; }
+.day-num{
+  font-family:'Shippori Mincho B1', serif; font-weight:800; font-size:2.6rem; color:var(--ai);
+  background:var(--kinari); border:2px solid var(--ai); width:3.4rem; height:3.4rem;
+  border-radius:50%; display:flex; align-items:center; justify-content:center;
+  margin-left:-3.05rem; flex-shrink:0;
+}
+.day-head h2{ font-family:'Shippori Mincho B1', serif; font-weight:700; font-size:1.55rem; color:var(--sumi); }
+.day-route{ color:var(--bengara); font-weight:700; font-size:.92rem; letter-spacing:.02em; margin-top:.15em; }
+
+.map-cta{
+  display:inline-flex; align-items:center; gap:.6em; background:var(--bengara); color:var(--kinari);
+  text-decoration:none; font-weight:700; font-size:.86rem; padding:.7em 1.2em; border-radius:999px;
+  box-shadow:0 4px 14px rgba(190,75,46,.35); margin: .3rem 0 1.8rem;
+  transition:transform .15s ease, box-shadow .15s ease;
+}
+.map-cta:hover, .map-cta:focus-visible{ transform:translateY(-2px); box-shadow:0 8px 20px rgba(190,75,46,.45); }
+.map-cta .seal{
+  width:1.5em; height:1.5em; border-radius:50%; border:2px solid var(--kinari);
+  display:flex; align-items:center; justify-content:center; font-family:'Shippori Mincho B1',serif; font-size:.85em;
+}
+
+/* timeline events */
+.timeline{ list-style:none; }
+.event{ position:relative; padding:0 0 1.5rem 0; display:grid; grid-template-columns: 4.6rem 1fr auto; gap:.6rem; align-items:start; }
+.event .time{ font-weight:900; font-size:.86rem; color:var(--ai); padding-top:.15rem; font-variant-numeric: tabular-nums; }
+.event .body strong{ font-weight:700; color:var(--sumi); }
+.event .body p{ font-size:.88rem; color:#544D43; margin-top:.2rem; }
+.event .body a{ color:var(--bengara); font-weight:700; }
+.event .tag{ display:inline-block; font-size:.7rem; font-weight:700; padding:.15em .6em; border-radius:5px; margin-left:.5em; transform:translateY(-1px); }
+.tag.meal{ background:#EADFC4; color:#7A5A22; }
+.tag.sight{ background:#DDE7DA; color:var(--wakatake); }
+.tag.move{ background:#EFD9CF; color:var(--bengara); }
+.tag.stay{ background:#DCE2ED; color:var(--ai); }
+.tag.shop{ background:#E8DCEA; color:#6B4A75; }
+.tag.free{ background:#EFEAE0; color:var(--ginnezu); }
+
+.event.lodging{ background:var(--kinari-soft); border:1px dashed var(--ginnezu); border-radius:10px; padding:1rem 1.1rem; margin-top:.4rem; grid-column:1/-1; display:grid; grid-template-columns:4.6rem 1fr auto; gap:.6rem; }
+.event.lodging .time{ color:var(--wakatake); }
+
+.item-actions{ display:flex; gap:.4rem; flex-shrink:0; }
+.edit-btn{
+  background:none; border:1px solid var(--ginnezu); color:var(--ginnezu);
+  width:1.7rem; height:1.7rem; border-radius:50%; cursor:pointer; font-size:.8rem;
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  transition:.15s;
+}
+.edit-btn:hover{ border-color:var(--ai); color:var(--ai); background:#eef1f6; }
+.del-btn{
+  background:none; border:1px solid var(--ginnezu); color:var(--ginnezu);
+  width:1.7rem; height:1.7rem; border-radius:50%; cursor:pointer; font-size:.85rem;
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  transition:.15s;
+}
+.del-btn:hover{ border-color:var(--bengara); color:var(--bengara); background:#fdf0ec; }
+
+/* add form */
+.add-wrap{ margin: .4rem 0 2.2rem; }
+.add-toggle{
+  background:none; border:1.5px dashed var(--ginnezu); color:var(--ai);
+  font-family:inherit; font-weight:700; font-size:.84rem; padding:.6em 1em;
+  border-radius:8px; cursor:pointer; width:100%; text-align:center;
+  transition:.15s;
+}
+.add-toggle:hover{ border-color:var(--bengara); color:var(--bengara); }
+.add-form{
+  display:none; margin-top:.8rem; background:#fff; border:1px solid var(--ginnezu);
+  border-radius:10px; padding:1rem; gap:.7rem; grid-template-columns:1fr 1fr;
+}
+.add-form.open{ display:grid; }
+.add-form label{ font-size:.74rem; font-weight:700; color:var(--ai); display:block; margin-bottom:.3rem; }
+.add-form .form-title{ font-family:'Shippori Mincho B1',serif; font-size:1.05rem; color:var(--ai); margin-bottom:.2rem; }
+.add-form input, .add-form select, .add-form textarea{
+  width:100%; font-family:inherit; font-size:.86rem; padding:.5em .6em;
+  border:1px solid var(--ginnezu); border-radius:6px; background:var(--kinari);
+}
+.add-form .full{ grid-column:1/-1; }
+.add-form .actions{ grid-column:1/-1; display:flex; gap:.6rem; justify-content:flex-end; margin-top:.2rem; }
+.add-form button{ font-family:inherit; font-weight:700; font-size:.82rem; padding:.55em 1.1em; border-radius:999px; cursor:pointer; border:none; }
+.btn-save{ background:var(--bengara); color:var(--kinari); }
+.btn-cancel{ background:none; color:var(--ginnezu); border:1px solid var(--ginnezu) !important; }
+
+/* notes */
+.notes{ background:var(--ai); color:var(--kinari); border-radius:14px; padding:1.8rem 1.6rem; margin: 3rem 0 2.5rem; }
+.notes h3{ font-family:'Shippori Mincho B1',serif; font-size:1.2rem; margin-bottom:1rem; color:#F0DFC8; }
+.notes ul{ list-style:none; }
+.notes li{ font-size:.86rem; padding:.55rem 0; border-top:1px solid rgba(246,240,228,.15); display:flex; gap:.6em; }
+.notes li:first-child{ border-top:none; }
+.notes li::before{ content:"·"; color:var(--bengara); font-weight:900; font-size:1.2em; line-height:1;}
+
+/* history drawer */
+.hist-overlay{
+  position:fixed; inset:0; background:rgba(16,26,46,.55); z-index:90;
+  display:none; align-items:flex-end; justify-content:center;
+}
+.hist-overlay.open{ display:flex; }
+.hist-panel{
+  background:var(--kinari); width:100%; max-width:640px; max-height:78vh;
+  border-radius:16px 16px 0 0; padding:1.4rem 1.4rem 2rem; overflow-y:auto;
+  animation: slideup .25s ease;
+}
+@keyframes slideup{ from{ transform:translateY(30px); opacity:0;} to{ transform:translateY(0); opacity:1;} }
+.hist-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; }
+.hist-head h3{ font-family:'Shippori Mincho B1',serif; font-size:1.15rem; }
+.hist-head button{ background:none; border:none; font-size:1.3rem; cursor:pointer; color:var(--ginnezu); }
+.hist-list{ list-style:none; }
+.hist-list li{
+  font-size:.83rem; padding:.7rem 0; border-top:1px solid var(--ginnezu);
+  display:flex; flex-direction:column; gap:.15rem;
+}
+.hist-list li:first-child{ border-top:none; }
+.hist-list .h-when{ color:var(--ginnezu); font-size:.74rem; }
+.hist-list .h-add{ color:var(--wakatake); font-weight:700; }
+.hist-list .h-del{ color:var(--bengara); font-weight:700; }
+.hist-empty{ color:var(--ginnezu); font-size:.85rem; text-align:center; padding:2rem 0; }
+
+.config-banner{
+  display:none; background:#5A2A1E; color:#F6E7DE; font-size:.82rem;
+  text-align:center; padding:.7rem 1rem; font-weight:700;
+}
+.saving-indicator{
+  display:none; font-size:.76rem; color:var(--bengara); font-weight:700;
+  align-self:center;
+}
+.author-name{
+  font-family:inherit; font-size:.8rem; padding:.4em .7em;
+  border:1px solid var(--ginnezu); border-radius:999px; background:#fff;
+  width:9rem; align-self:center; margin-left:auto;
+}
+
+footer{ text-align:center; font-size:.78rem; color:var(--ginnezu); padding:2rem 1rem 3rem; }
+
+@media (max-width:480px){
+  .event{ grid-template-columns:3.6rem 1fr auto; gap:.5rem; }
+  .day{ padding-left:2.1rem; }
+  .day-num{ width:2.7rem; height:2.7rem; font-size:2rem; margin-left:-2.35rem; }
+  .add-form{ grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow">TRAVEL ITINERARY — 旅のしおり</div>
+    <h1>山形・庄内 ドライブ旅<small>米沢の牛から、最上川の舟旅まで</small></h1>
+    <div class="hero-meta">
+      <div><b>2026.8.8</b>（土）〜<b>8.10</b>（月）・2泊3日</div>
+      <div>移動：レンタカー（米沢〜酒田）</div>
+    </div>
+    <div class="route-band">
+      <span class="stop">米沢</span><span class="arrow">→</span>
+      <span class="stop">天童温泉</span><span class="arrow">→</span>
+      <span class="stop">酒田</span><span class="arrow">→</span>
+      <span class="stop">山形空港</span>
+    </div>
+  </div>
+</header>
+
+<div id="configBanner" class="config-banner"></div>
+
+<nav class="daynav">
+  <a href="#day1">一日目 8/8</a>
+  <a href="#day2">二日目 8/9</a>
+  <a href="#day3">三日目 8/10</a>
+  <span id="savingIndicator" class="saving-indicator">保存中…</span>
+  <input id="authorName" class="author-name" type="text" placeholder="あなたの名前（任意）">
+  <button class="hist-btn" id="openHist" type="button">変更履歴</button>
+</nav>
+
+<main>
+
+  <!-- ============ DAY 1 ============ -->
+  <section class="day" id="day1">
+    <div class="day-head">
+      <div class="day-num serif">一</div>
+      <div><h2>8月8日（土）</h2><div class="day-route">米沢 → 天童温泉</div></div>
+    </div>
+    <a class="map-cta" target="_blank" rel="noopener"
+       href="https://www.google.com/maps/dir/?api=1&origin=37.9096375,140.1281069&destination=38.3594017,140.3821411&waypoints=37.9149626,140.1118421|37.9092616,140.1041694|38.3131193,140.4346099&travelmode=driving">
+      <span class="seal">図</span> 本日のドライブルートを見る（米沢駅→天童ホテル）
+    </a>
+    <ol class="timeline" id="list-day1"></ol>
+    <div class="add-wrap">
+      <button class="add-toggle" data-day="day1" type="button">＋ 予定を追加</button>
+      <div class="add-form" data-day="day1"></div>
+    </div>
+  </section>
+
+  <!-- ============ DAY 2 ============ -->
+  <section class="day" id="day2">
+    <div class="day-head">
+      <div class="day-num serif">二</div>
+      <div><h2>8月9日（日）</h2><div class="day-route">天童 → 酒田</div></div>
+    </div>
+    <a class="map-cta" target="_blank" rel="noopener"
+       href="https://www.google.com/maps/dir/?api=1&origin=38.3594017,140.3821411&destination=38.913597,139.834965&waypoints=38.7616566,139.7246678|38.9108912,139.8369957|38.9190069,139.8280483&travelmode=driving">
+      <span class="seal">図</span> 本日のドライブルートを見る（天童ホテル→地蔵の湯旅館）
+    </a>
+    <ol class="timeline" id="list-day2"></ol>
+    <div class="add-wrap">
+      <button class="add-toggle" data-day="day2" type="button">＋ 予定を追加</button>
+      <div class="add-form" data-day="day2"></div>
+    </div>
+  </section>
+
+  <!-- ============ DAY 3 ============ -->
+  <section class="day" id="day3">
+    <div class="day-head">
+      <div class="day-num serif">三</div>
+      <div><h2>8月10日（月）</h2><div class="day-route">酒田 → 山形空港</div></div>
+    </div>
+    <a class="map-cta" target="_blank" rel="noopener"
+       href="https://www.google.com/maps/dir/?api=1&origin=38.913597,139.834965&destination=38.4122393,140.3703441&waypoints=38.7860473,140.0268917|38.7667272,140.0565879|38.7379836,140.1498384&travelmode=driving">
+      <span class="seal">図</span> 本日のドライブルートを見る（地蔵の湯旅館→山形空港）
+    </a>
+    <ol class="timeline" id="list-day3"></ol>
+    <div class="add-wrap">
+      <button class="add-toggle" data-day="day3" type="button">＋ 予定を追加</button>
+      <div class="add-form" data-day="day3"></div>
+    </div>
+  </section>
+
+  <section class="notes">
+    <h3 class="serif">旅のメモ</h3>
+    <ul>
+      <li>山寺・加茂水族館・舟下りは天候や混雑で所要時間が前後する可能性あり。時間には余裕を持って。</li>
+      <li>舟下り「義経ロマン観光」は要予約（0234-57-2148）。運航状況は前日〜当日に確認。</li>
+      <li>天童ホテルの無料送迎（JR天童駅⇔ホテル）は前日までの要予約。今回はレンタカーのため利用なし。</li>
+      <li>酒田市内のグルメ・観光は<a href="https://sakata-kankou.com/spot" target="_blank" rel="noopener" style="color:#F0DFC8; font-weight:700;">酒田さんぽ</a>を見ながら当日決定。</li>
+      <li>宿近くの酒屋メモ：十四代 木川屋商店 新橋本店（地蔵の湯旅館から車で約5分）。</li>
+      <li>この予定表はメンバー全員で追加・削除できます。右上「変更履歴」から編集ログを確認できます。</li>
+    </ul>
+  </section>
+
+</main>
+
+<footer>山形・庄内ドライブしおり — 2026.8.8–8.10</footer>
+
+<!-- History drawer -->
+<div class="hist-overlay" id="histOverlay">
+  <div class="hist-panel">
+    <div class="hist-head">
+      <h3 class="serif">変更履歴</h3>
+      <button id="closeHist" type="button" aria-label="閉じる">×</button>
+    </div>
+    <ul class="hist-list" id="histList"></ul>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   GitHub連携の設定
+   ------------------------------------------------------------
+   1. GitHubで公開リポジトリを新規作成（例：yamagata-trip）
+   2. Settings > Developer settings > Fine-grained personal access tokens
+      で新規トークンを発行。
+        - Repository access: 「Only select repositories」→ 上記リポジトリのみ選択
+        - Permissions: 「Contents」を Read and write に設定
+      （これ以外の権限は付けない。他のリポジトリには一切アクセスできないトークンになります）
+      ※このトークンはページのソースコードに埋め込まれるため、誰でも閲覧できます。
+        漏洩しても「このリポジトリの中身を読み書きされる」以上の影響はありません。
+   3. 下の owner / repo / token を書き換える
+   4. このファイルを index.html としてリポジトリ直下にコミット
+   5. Settings > Pages で Source を「main branch / root」に設定して公開
+   ============================================================ */
+const GH = {
+  owner: 'w4serinn',   // 例: 'taro-yamada'
+  repo: 'yamagata_trip',         // 例: 'yamagata-trip'
+  branch: 'main',
+  token: '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',// 例: 'github_pat_xxxxxxxx'
+  dataPath: 'itinerary-data.json',
+};
+function ghConfigured(){
+  return GH.owner!=='YOUR_GITHUB_USERNAME' && GH.token!=='YOUR_FINE_GRAINED_TOKEN' && GH.token.length>10;
+}
+function ghApiBase(){ return `https://api.github.com/repos/${GH.owner}/${GH.repo}`; }
+function authHeaders(){ return { Authorization:`token ${GH.token}`, Accept:'application/vnd.github+json' }; }
+
+async function ghGetFile(){
+  const res = await fetch(`${ghApiBase()}/contents/${GH.dataPath}?ref=${GH.branch}&t=${Date.now()}`, {
+    headers: authHeaders()
+  });
+  if(res.status===404) return { json:null, sha:null };
+  if(!res.ok) throw new Error('GitHub read failed: '+res.status);
+  const body = await res.json();
+  const text = decodeURIComponent(escape(atob(body.content.replace(/\n/g,''))));
+  return { json: JSON.parse(text), sha: body.sha };
+}
+
+async function ghPutFile(obj, sha, message){
+  const content = btoa(unescape(encodeURIComponent(JSON.stringify(obj, null, 2))));
+  const body = { message, content, branch: GH.branch };
+  if(sha) body.sha = sha;
+  const res = await fetch(`${ghApiBase()}/contents/${GH.dataPath}`, {
+    method:'PUT',
+    headers:{ ...authHeaders(), 'Content-Type':'application/json' },
+    body: JSON.stringify(body)
+  });
+  if(!res.ok){ const t = await res.text(); throw new Error('GitHub write failed: '+res.status+' '+t); }
+  return res.json();
+}
+
+async function ghGetHistory(){
+  const res = await fetch(`${ghApiBase()}/commits?path=${encodeURIComponent(GH.dataPath)}&per_page=30`, {
+    headers: authHeaders()
+  });
+  if(!res.ok) return [];
+  const commits = await res.json();
+  return commits.map(c=>({
+    message: c.commit.message,
+    who: c.commit.author?.name || '',
+    ts: new Date(c.commit.author?.date || c.commit.committer?.date).getTime(),
+  }));
+}
+
+function myName(){
+  return localStorage.getItem('trip-author-name') || '';
+}
+
+const DAY_LABEL = { day1:'8/8', day2:'8/9', day3:'8/10' };
+const TAG_LABEL = { meal:'食事', sight:'観光', move:'移動', stay:'宿泊', shop:'買い物', free:'自由' };
+
+const DEFAULT_DATA = {
+  day1: [
+    {time:'09:00', tag:'move', title:'東京駅 発', note:'JR山形新幹線「つばさ131号」'},
+    {time:'11:04', tag:'move', title:'米沢駅 着', note:'レンタカーを受け取り、ここから3日間のドライブ旅がスタート。'},
+    {time:'12:00', tag:'meal', title:'米沢牛焼肉さかの', note:'米沢駅から車で約5分。米沢牛の焼肉ランチ。'},
+    {time:'13:15', tag:'sight', title:'上杉神社・松が岬公園', note:'米沢城跡。上杉謙信・鷹山を祀る神社を散策（約45分）。'},
+    {time:'14:00', tag:'move', title:'米沢 発', note:'山形経由で山寺方面へ。'},
+    {time:'15:15〜17:00', tag:'sight', title:'山寺（宝珠山立石寺）', note:'松尾芭蕉の句で知られる霊場。1,015段の石段を往復（約1.5〜2時間）。'},
+    {time:'17:30', tag:'stay', title:'天童温泉 美味求真の宿 天童ホテル', note:'1泊目。JR天童駅から徒歩約10分／無料送迎あり（前日までの要予約）。'},
+  ],
+  day2: [
+    {time:'10:00', tag:'move', title:'天童ホテル 発', note:''},
+    {time:'12:00〜13:30', tag:'sight', title:'加茂水族館', note:'鶴岡。クラゲの展示で有名（館内1〜1.5時間）。'},
+    {time:'13:30〜14:30', tag:'meal', title:'酒田市内で昼食', note:'<a href="https://sakata-kankou.com/spot" target="_blank" rel="noopener">酒田さんぽ</a>で当日調べて決める。'},
+    {time:'14:30〜15:15', tag:'sight', title:'山居倉庫', note:'明治期の米蔵。酒田のシンボル。（確定）'},
+    {time:'15:15〜16:00', tag:'sight', title:'日和山公園', note:'日本海を望む高台の公園。灯台や北前船の展示。（確定）'},
+    {time:'16:00〜16:20', tag:'shop', title:'十四代 木川屋商店 新橋本店でお酒を購入', note:'チェックイン前後に立ち寄り。地蔵の湯旅館から車で約5分の酒屋。'},
+    {time:'16:30頃', tag:'stay', title:'地蔵の湯旅館 チェックイン', note:'2泊目。レンタカーはここに駐車し、以降は徒歩で移動。'},
+    {time:'19:00', tag:'meal', title:'こい勢', note:'寿司。'},
+  ],
+  day3: [
+    {time:'10:30', tag:'move', title:'地蔵の湯旅館 チェックアウト', note:''},
+    {time:'10:30〜11:00', tag:'free', title:'酒田駅前・港周辺を散策', note:''},
+    {time:'11:00', tag:'move', title:'酒田 発', note:'国道47号（最上川沿い）を東へ。'},
+    {time:'11:40〜12:00', tag:'sight', title:'清川関所跡', note:'松尾芭蕉「奥の細道」上陸の地。最上川舟運の関所跡。'},
+    {time:'12:00〜13:00', tag:'move', title:'最上川舟下り（義経ロマン観光）', note:'高屋乗船場、周遊コース（往復・約60分）。仙人堂にも上陸。要予約：0234-57-2148'},
+    {time:'13:00〜13:30', tag:'free', title:'白糸の滝・道の駅とざわ', note:'車窓 or 軽い立ち寄りで昼食休憩。'},
+    {time:'13:30', tag:'move', title:'新庄経由で出発', note:''},
+    {time:'14:30頃', tag:'stay', title:'山形空港 着', note:'レンタカー返却。搭乗まで約3時間半のゆとり。'},
+    {time:'18:05', tag:'move', title:'山形空港 発 → 伊丹空港', note:''},
+  ],
+};
+
+let DATA = null;
+let DATA_SHA = null;
+let HISTORY = [];
+let SAVING = false;
+
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+
+async function loadData(){
+  if(!ghConfigured()){
+    DATA = JSON.parse(JSON.stringify(DEFAULT_DATA));
+    Object.values(DATA).flat().forEach(ev=>ev.id=uid());
+    return;
+  }
+  try{
+    const { json, sha } = await ghGetFile();
+    if(json){ DATA = json; DATA_SHA = sha; }
+    else{
+      DATA = JSON.parse(JSON.stringify(DEFAULT_DATA));
+      Object.values(DATA).flat().forEach(ev=>ev.id=uid());
+      const res = await ghPutFile(DATA, null, '初期化: 旅程データを作成');
+      DATA_SHA = res.content.sha;
+    }
+  }catch(e){
+    console.error(e);
+    DATA = JSON.parse(JSON.stringify(DEFAULT_DATA));
+    Object.values(DATA).flat().forEach(ev=>ev.id=uid());
+    showBanner('GitHubへの接続に失敗しました。設定（owner/repo/token）をご確認ください。表示中の内容は保存されません。');
+  }
+  Object.values(DATA).flat().forEach(ev=>{ if(!ev.id) ev.id = uid(); });
+}
+
+async function saveData(message){
+  if(!ghConfigured()) return;
+  SAVING = true; updateSavingIndicator();
+  try{
+    const res = await ghPutFile(DATA, DATA_SHA, message);
+    DATA_SHA = res.content.sha;
+  }catch(e){
+    console.error(e);
+    alert('保存に失敗しました。他の人と同時に編集した可能性があります。ページを再読み込みしてから、もう一度お試しください。');
+  }
+  SAVING = false; updateSavingIndicator();
+}
+
+function updateSavingIndicator(){
+  const el = document.getElementById('savingIndicator');
+  if(el) el.style.display = SAVING ? 'inline' : 'none';
+}
+
+async function loadHistory(){
+  if(!ghConfigured()){ HISTORY = []; return; }
+  HISTORY = await ghGetHistory();
+}
+
+function fmtTime(ts){
+  const d = new Date(ts);
+  return d.getFullYear()+'/'+(d.getMonth()+1)+'/'+d.getDate()+' '+
+    String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+}
+
+function renderDay(dayKey){
+  const ol = document.getElementById('list-'+dayKey);
+  ol.innerHTML='';
+  DATA[dayKey].forEach(ev=>{
+    const li = document.createElement('li');
+    li.className = 'event' + (ev.tag==='stay' ? ' lodging' : '');
+    li.innerHTML = `
+      <span class="time">${ev.time}</span>
+      <div class="body">
+        <strong>${ev.title}</strong><span class="tag ${ev.tag}">${TAG_LABEL[ev.tag]||''}</span>
+        ${ev.note ? `<p>${ev.note}</p>` : ''}
+      </div>
+      <div class="item-actions">
+        <button class="edit-btn" title="編集" aria-label="この予定を編集">✎</button>
+        <button class="del-btn" title="削除" aria-label="この予定を削除">×</button>
+      </div>
+    `;
+    li.querySelector('.edit-btn').addEventListener('click', ()=>toggleForm(dayKey, true, ev.id));
+    li.querySelector('.del-btn').addEventListener('click', ()=>removeEvent(dayKey, ev.id));
+    ol.appendChild(li);
+  });
+}
+
+function renderAll(){
+  Object.keys(DATA).forEach(renderDay);
+}
+
+async function removeEvent(dayKey, id){
+  const ev = DATA[dayKey].find(e=>e.id===id);
+  if(!ev) return;
+  if(!confirm(`「${ev.title}」を削除しますか？`)) return;
+  DATA[dayKey] = DATA[dayKey].filter(e=>e.id!==id);
+  const who = myName();
+  await saveData(`削除${who?'('+who+')':''}: 「${ev.title}」(${DAY_LABEL[dayKey]})`);
+  renderDay(dayKey);
+  await loadHistory();
+  renderHistory();
+}
+
+function buildForm(dayKey, editId){
+  const wrap = document.querySelector(`.add-form[data-day="${dayKey}"]`);
+  const editing = !!editId;
+  const ev = editing ? DATA[dayKey].find(e=>e.id===editId) : null;
+
+  const options = DATA[dayKey].map((e,i)=>`<option value="${i}">${i+1}. ${e.title} の前に挿入</option>`).join('');
+  const posField = editing ? '' : `
+    <div class="full"><label>挿入位置</label>
+      <select class="f-pos">
+        ${options}
+        <option value="${DATA[dayKey].length}" selected>最後に追加</option>
+      </select>
+    </div>`;
+
+  wrap.innerHTML = `
+    ${editing ? '<div class="full form-title">予定を編集</div>' : ''}
+    <div><label>時刻</label><input type="text" class="f-time" placeholder="例）14:30〜15:00" value="${ev?escapeAttr(ev.time):''}"></div>
+    <div><label>タグ</label>
+      <select class="f-tag">
+        <option value="sight">観光</option>
+        <option value="meal">食事</option>
+        <option value="move">移動</option>
+        <option value="shop">買い物</option>
+        <option value="stay">宿泊</option>
+        <option value="free">自由</option>
+      </select>
+    </div>
+    <div class="full"><label>内容</label><input type="text" class="f-title" placeholder="例）〇〇神社にお参り" value="${ev?escapeAttr(ev.title):''}"></div>
+    <div class="full"><label>メモ（任意）</label><textarea class="f-note" rows="2" placeholder="補足があれば">${ev?ev.note||'':''}</textarea></div>
+    ${posField}
+    <div class="actions">
+      <button type="button" class="btn-cancel">キャンセル</button>
+      <button type="button" class="btn-save">${editing ? '更新する' : '追加する'}</button>
+    </div>
+  `;
+  if(ev) wrap.querySelector('.f-tag').value = ev.tag;
+
+  wrap.querySelector('.btn-cancel').addEventListener('click', ()=>toggleForm(dayKey,false));
+  wrap.querySelector('.btn-save').addEventListener('click', ()=>{
+    if(editing) submitEdit(dayKey, editId); else submitAdd(dayKey);
+  });
+}
+
+function escapeAttr(s){ return String(s).replace(/"/g,'&quot;'); }
+
+function toggleForm(dayKey, open, editId){
+  const wrap = document.querySelector(`.add-form[data-day="${dayKey}"]`);
+  if(open){
+    buildForm(dayKey, editId);
+    wrap.classList.add('open');
+    wrap.scrollIntoView({behavior:'smooth', block:'center'});
+  }else{
+    wrap.classList.remove('open');
+  }
+}
+
+async function submitAdd(dayKey){
+  const wrap = document.querySelector(`.add-form[data-day="${dayKey}"]`);
+  const time = wrap.querySelector('.f-time').value.trim() || '未定';
+  const title = wrap.querySelector('.f-title').value.trim();
+  const tag = wrap.querySelector('.f-tag').value;
+  const note = wrap.querySelector('.f-note').value.trim();
+  const pos = parseInt(wrap.querySelector('.f-pos').value, 10);
+  if(!title){ alert('内容を入力してください'); return; }
+  const ev = {id:uid(), time, tag, title, note};
+  DATA[dayKey].splice(pos, 0, ev);
+  const who = myName();
+  await saveData(`追加${who?'('+who+')':''}: 「${title}」(${DAY_LABEL[dayKey]})`);
+  renderDay(dayKey);
+  toggleForm(dayKey, false);
+  await loadHistory();
+  renderHistory();
+}
+
+async function submitEdit(dayKey, id){
+  const wrap = document.querySelector(`.add-form[data-day="${dayKey}"]`);
+  const ev = DATA[dayKey].find(e=>e.id===id);
+  if(!ev) return;
+  const time = wrap.querySelector('.f-time').value.trim() || '未定';
+  const title = wrap.querySelector('.f-title').value.trim();
+  const tag = wrap.querySelector('.f-tag').value;
+  const note = wrap.querySelector('.f-note').value.trim();
+  if(!title){ alert('内容を入力してください'); return; }
+  ev.time = time; ev.title = title; ev.tag = tag; ev.note = note;
+  const who = myName();
+  await saveData(`編集${who?'('+who+')':''}: 「${title}」(${DAY_LABEL[dayKey]})`);
+  renderDay(dayKey);
+  toggleForm(dayKey, false);
+  await loadHistory();
+  renderHistory();
+}
+
+function renderHistory(){
+  const list = document.getElementById('histList');
+  if(!ghConfigured()){
+    list.innerHTML = '<div class="hist-empty">GitHub連携が未設定です。設定するとここに編集履歴（gitコミット履歴）が表示されます。</div>';
+    return;
+  }
+  if(HISTORY.length===0){
+    list.innerHTML = '<div class="hist-empty">まだ変更履歴はありません</div>';
+    return;
+  }
+  list.innerHTML = HISTORY.map(h=>{
+    const isDel = h.message.startsWith('削除');
+    const isInit = h.message.startsWith('初期化');
+    const cls = isDel ? 'h-del' : (isInit ? '' : 'h-add');
+    return `
+    <li>
+      <span class="${cls}">${h.message}</span>
+      <span class="h-when">${fmtTime(h.ts)}${h.who?' ・ '+h.who:''}</span>
+    </li>`;
+  }).join('');
+}
+
+function showBanner(msg){
+  const b = document.getElementById('configBanner');
+  if(!b) return;
+  b.textContent = msg;
+  b.style.display = 'block';
+}
+
+document.querySelectorAll('.add-toggle').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const day = btn.dataset.day;
+    const form = document.querySelector(`.add-form[data-day="${day}"]`);
+    toggleForm(day, !form.classList.contains('open'));
+  });
+});
+
+document.getElementById('openHist').addEventListener('click', ()=>{
+  renderHistory();
+  document.getElementById('histOverlay').classList.add('open');
+});
+document.getElementById('closeHist').addEventListener('click', ()=>{
+  document.getElementById('histOverlay').classList.remove('open');
+});
+document.getElementById('histOverlay').addEventListener('click', (e)=>{
+  if(e.target.id==='histOverlay') e.currentTarget.classList.remove('open');
+});
+
+(async function init(){
+  if(!ghConfigured()){
+    showBanner('⚠ GitHub連携が未設定です。今表示されているのはサンプル内容で、編集は保存されません。スクリプト内の GH の owner / repo / token を設定してください。');
+  }
+  const nameInput = document.getElementById('authorName');
+  if(nameInput){
+    nameInput.value = myName();
+    nameInput.addEventListener('change', ()=> localStorage.setItem('trip-author-name', nameInput.value.trim()));
+  }
+
+  await loadData();
+  await loadHistory();
+  renderAll();
+  renderHistory();
+
+  const days = document.querySelectorAll('.day');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); io.unobserve(e.target);} });
+  }, {threshold:.08});
+  days.forEach(d=>io.observe(d));
+})();
+</script>
+
+</body>
+</html>
