@@ -184,10 +184,40 @@ main{ max-width:760px; margin:0 auto; padding: 0 1.4rem 2rem; position:relative;
 .notes{ background:var(--ai); color:var(--kinari); border-radius:14px; padding:1.8rem 1.6rem; margin: 3rem 0 2.5rem; }
 .notes h3{ font-family:'Shippori Mincho B1',serif; font-size:1.2rem; margin-bottom:1rem; color:#F0DFC8; }
 .notes ul{ list-style:none; }
-.notes li{ font-size:.86rem; padding:.55rem 0; border-top:1px solid rgba(246,240,228,.15); display:flex; gap:.6em; }
+.notes li{ font-size:.86rem; padding:.55rem 0; border-top:1px solid rgba(246,240,228,.15); display:flex; gap:.6em; align-items:flex-start; }
 .notes li:first-child{ border-top:none; }
 .notes li::before{ content:"·"; color:var(--bengara); font-weight:900; font-size:1.2em; line-height:1; flex-shrink:0; }
-.notes li span{ min-width:0; flex:1; }
+.notes li span{ min-width:0; flex:1; padding-top:.05rem; }
+.notes .item-actions{ display:flex; gap:.4rem; flex-shrink:0; }
+.notes .edit-btn, .notes .del-btn{
+  background:none; border:1px solid rgba(246,240,228,.35); color:rgba(246,240,228,.7);
+  width:1.6rem; height:1.6rem; border-radius:50%; cursor:pointer; font-size:.78rem;
+  display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:.15s;
+}
+.notes .edit-btn:hover{ border-color:var(--kinari); color:var(--kinari); background:rgba(246,240,228,.08); }
+.notes .del-btn:hover{ border-color:#e8a793; color:#e8a793; background:rgba(190,75,46,.15); }
+.notes-add-wrap{ margin-top:1.2rem; }
+.notes-add-toggle{
+  background:none; border:1.5px dashed rgba(246,240,228,.35); color:var(--kinari);
+  font-family:inherit; font-weight:700; font-size:.84rem; padding:.6em 1em;
+  border-radius:8px; cursor:pointer; width:100%; text-align:center; transition:.15s;
+}
+.notes-add-toggle:hover{ border-color:var(--kinari); background:rgba(246,240,228,.08); }
+.notes-add-form{
+  display:none; margin-top:.8rem; background:rgba(246,240,228,.06); border:1px solid rgba(246,240,228,.25);
+  border-radius:10px; padding:1rem;
+}
+.notes-add-form.open{ display:block; }
+.notes-add-form label{ font-size:.74rem; font-weight:700; color:var(--kinari); display:block; margin-bottom:.4rem; }
+.notes-add-form textarea{
+  width:100%; font-family:inherit; font-size:.86rem; padding:.6em .7em;
+  border:1px solid rgba(246,240,228,.3); border-radius:6px; background:rgba(246,240,228,.9); color:var(--sumi);
+  margin-bottom:.8rem;
+}
+.notes-add-form .actions{ display:flex; gap:.6rem; justify-content:flex-end; }
+.notes-add-form button{ font-family:inherit; font-weight:700; font-size:.82rem; padding:.55em 1.1em; border-radius:999px; cursor:pointer; border:none; }
+.notes-add-form .btn-save{ background:var(--bengara); color:var(--kinari); }
+.notes-add-form .btn-cancel{ background:none; color:rgba(246,240,228,.7); border:1px solid rgba(246,240,228,.35) !important; }
 
 /* history drawer */
 .hist-overlay{
@@ -336,15 +366,11 @@ footer{ text-align:center; font-size:.78rem; color:var(--ginnezu); padding:2rem 
 
   <section class="notes">
     <h3 class="serif">旅のメモ</h3>
-    <ul>
-      <li><span>山寺・加茂水族館・舟下りは天候や混雑で所要時間が前後する可能性あり。時間には余裕を持って。</span></li>
-      <li><span>舟下り「義経ロマン観光」は要予約（0234-57-2148）。運航状況は前日〜当日に確認。</span></li>
-      <li><span>天童ホテルの無料送迎（JR天童駅⇔ホテル）は前日までの要予約。今回はレンタカーのため利用なし。</span></li>
-      <li><span>酒田市内のグルメ・観光は<a href="https://sakata-kankou.com/spot" target="_blank" rel="noopener" style="color:#F0DFC8; font-weight:700;">酒田さんぽ</a>を見ながら当日決定。</span></li>
-      <li><span>宿近くの酒屋メモ：十四代 木川屋商店 新橋本店（地蔵の湯旅館から車で約5分）。</span></li>
-      <li><span>この予定表はメンバー全員で追加・削除できます。右上「変更履歴」から編集ログを確認できます。</span></li>
-      <li><span>「本日のドライブルートを見る」は、その日の予定リストから自動で組み立てられます。予定の「内容」欄には、文章ではなく<strong>施設名・店名</strong>（例：「上杉神社」「こい勢」）で入力すると、ルート検索に正しく反映されます。</span></li>
-    </ul>
+    <ul id="notes-list"></ul>
+    <div class="add-wrap notes-add-wrap">
+      <button class="add-toggle notes-add-toggle" id="notes-add-toggle" type="button">＋ メモを追加</button>
+      <div class="add-form notes-add-form" id="notes-add-form"></div>
+    </div>
   </section>
 
 </main>
@@ -509,7 +535,17 @@ const DEFAULT_DATA = {
     {time:'14:30頃', tag:'stay', title:'山形空港 着', note:'レンタカー返却。搭乗まで約3時間半のゆとり。'},
     {time:'18:05', tag:'move', title:'山形空港 発 → 伊丹空港', note:''},
   ],
+  notes: [
+    {text:'山寺・加茂水族館・舟下りは天候や混雑で所要時間が前後する可能性あり。時間には余裕を持って。'},
+    {text:'舟下り「義経ロマン観光」は要予約（0234-57-2148）。運航状況は前日〜当日に確認。'},
+    {text:'天童ホテルの無料送迎（JR天童駅⇔ホテル）は前日までの要予約。今回はレンタカーのため利用なし。'},
+    {text:'酒田市内のグルメ・観光は<a href="https://sakata-kankou.com/spot" target="_blank" rel="noopener" style="color:#F0DFC8; font-weight:700;">酒田さんぽ</a>を見ながら当日決定。'},
+    {text:'宿近くの酒屋メモ：十四代 木川屋商店 新橋本店（地蔵の湯旅館から車で約5分）。'},
+    {text:'この予定表はメンバー全員で追加・削除できます。右上「変更履歴」から編集ログを確認できます。'},
+    {text:'「本日のドライブルートを見る」は、その日の予定リストから自動で組み立てられます。予定の「内容」欄には、文章ではなく<strong>施設名・店名</strong>（例：「上杉神社」「こい勢」）で入力すると、ルート検索に正しく反映されます。'},
+  ],
 };
+const DAY_KEYS = ['day1','day2','day3'];
 
 let DATA = null;
 let DATA_SHA = null;
@@ -618,8 +654,9 @@ function renderDay(dayKey){
 }
 
 function renderAll(){
-  Object.keys(DATA).forEach(renderDay);
-  Object.keys(DATA).forEach(updateMapLink);
+  DAY_KEYS.forEach(renderDay);
+  DAY_KEYS.forEach(updateMapLink);
+  renderNotes();
 }
 
 function updateMapLink(dayKey){
@@ -791,6 +828,102 @@ async function submitEdit(dayKey, id){
   renderHistory();
 }
 
+/* ---------- 旅のメモ ---------- */
+function renderNotes(){
+  const ul = document.getElementById('notes-list');
+  if(!ul) return;
+  ul.innerHTML='';
+  (DATA.notes||[]).forEach(n=>{
+    const li = document.createElement('li');
+    li.innerHTML = `
+      <span>${n.text}</span>
+      <div class="item-actions">
+        <button class="edit-btn" title="編集" aria-label="このメモを編集">✎</button>
+        <button class="del-btn" title="削除" aria-label="このメモを削除">×</button>
+      </div>
+    `;
+    li.querySelector('.edit-btn').addEventListener('click', ()=>toggleNoteForm(true, n.id));
+    li.querySelector('.del-btn').addEventListener('click', ()=>removeNote(n.id));
+    ul.appendChild(li);
+  });
+}
+
+function buildNoteForm(editId){
+  const wrap = document.getElementById('notes-add-form');
+  const editing = !!editId;
+  const n = editing ? DATA.notes.find(x=>x.id===editId) : null;
+  wrap.innerHTML = `
+    ${editing ? '<label>メモを編集</label>' : '<label>メモの内容</label>'}
+    <textarea class="n-text" rows="2" placeholder="例）〇〇は要予約、電話番号は〜">${n?n.text:''}</textarea>
+    <div class="actions">
+      <button type="button" class="btn-cancel">キャンセル</button>
+      <button type="button" class="btn-save">${editing?'更新する':'追加する'}</button>
+    </div>
+  `;
+  wrap.querySelector('.btn-cancel').addEventListener('click', ()=>toggleNoteForm(false));
+  wrap.querySelector('.btn-save').addEventListener('click', ()=>{
+    if(editing) submitEditNote(editId); else submitAddNote();
+  });
+}
+
+function toggleNoteForm(open, editId){
+  const wrap = document.getElementById('notes-add-form');
+  if(open){
+    buildNoteForm(editId);
+    wrap.classList.add('open');
+    wrap.scrollIntoView({behavior:'smooth', block:'center'});
+  }else{
+    wrap.classList.remove('open');
+  }
+}
+
+async function submitAddNote(){
+  const wrap = document.getElementById('notes-add-form');
+  const text = wrap.querySelector('.n-text').value.trim();
+  if(!text){ alert('内容を入力してください'); return; }
+  if(!DATA.notes) DATA.notes = [];
+  const n = {id:uid(), text};
+  DATA.notes.push(n);
+  const who = myName();
+  const ok = await saveData(`メモ追加${who?'('+who+')':''}`);
+  if(!ok){ DATA.notes = DATA.notes.filter(x=>x.id!==n.id); return; }
+  renderNotes();
+  toggleNoteForm(false);
+  await loadHistory();
+  renderHistory();
+}
+
+async function submitEditNote(id){
+  const wrap = document.getElementById('notes-add-form');
+  const n = DATA.notes.find(x=>x.id===id);
+  if(!n) return;
+  const text = wrap.querySelector('.n-text').value.trim();
+  if(!text){ alert('内容を入力してください'); return; }
+  const before = n.text;
+  n.text = text;
+  const who = myName();
+  const ok = await saveData(`メモ編集${who?'('+who+')':''}`);
+  if(!ok){ n.text = before; return; }
+  renderNotes();
+  toggleNoteForm(false);
+  await loadHistory();
+  renderHistory();
+}
+
+async function removeNote(id){
+  const n = DATA.notes.find(x=>x.id===id);
+  if(!n) return;
+  if(!confirm('このメモを削除しますか？')) return;
+  const snapshot = DATA.notes;
+  DATA.notes = DATA.notes.filter(x=>x.id!==id);
+  const who = myName();
+  const ok = await saveData(`メモ削除${who?'('+who+')':''}`);
+  if(!ok){ DATA.notes = snapshot; return; }
+  renderNotes();
+  await loadHistory();
+  renderHistory();
+}
+
 function renderHistory(){
   const list = document.getElementById('histList');
   if(!ghConfigured()){
@@ -820,12 +953,17 @@ function showBanner(msg){
   b.style.display = 'block';
 }
 
-document.querySelectorAll('.add-toggle').forEach(btn=>{
+document.querySelectorAll('.add-toggle[data-day]').forEach(btn=>{
   btn.addEventListener('click', ()=>{
     const day = btn.dataset.day;
     const form = document.querySelector(`.add-form[data-day="${day}"]`);
     toggleForm(day, !form.classList.contains('open'));
   });
+});
+
+document.getElementById('notes-add-toggle').addEventListener('click', ()=>{
+  const form = document.getElementById('notes-add-form');
+  toggleNoteForm(!form.classList.contains('open'));
 });
 
 function fitPanels(){
