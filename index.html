@@ -135,7 +135,16 @@ main{ max-width:760px; margin:0 auto; padding: 0 1.4rem 2rem; position:relative;
 .event.lodging{ background:var(--kinari-soft); border:1px dashed var(--ginnezu); border-radius:10px; padding:1rem 1.1rem; margin-top:.4rem; grid-column:1/-1; display:grid; grid-template-columns:4.6rem 1fr auto; gap:.6rem; }
 .event.lodging .time{ color:var(--wakatake); }
 
-.item-actions{ display:flex; gap:.4rem; flex-shrink:0; }
+.item-actions{ display:flex; align-items:center; gap:.4rem; flex-shrink:0; }
+.move-group{ display:flex; flex-direction:column; gap:2px; }
+.move-btn{
+  background:none; border:1px solid var(--ginnezu); color:var(--ginnezu);
+  width:1.5rem; height:.95rem; border-radius:4px; cursor:pointer; font-size:.55rem; line-height:1;
+  display:flex; align-items:center; justify-content:center; padding:0; transition:.15s;
+}
+.move-btn:hover{ border-color:var(--ai); color:var(--ai); background:#eef1f6; }
+.move-btn:disabled{ opacity:.25; cursor:default; }
+.move-btn:disabled:hover{ border-color:var(--ginnezu); color:var(--ginnezu); background:none; }
 .edit-btn{
   background:none; border:1px solid var(--ginnezu); color:var(--ginnezu);
   width:1.7rem; height:1.7rem; border-radius:50%; cursor:pointer; font-size:.8rem;
@@ -648,7 +657,8 @@ function fmtTime(ts){
 function renderDay(dayKey){
   const ol = document.getElementById('list-'+dayKey);
   ol.innerHTML='';
-  DATA[dayKey].forEach(ev=>{
+  const list = DATA[dayKey];
+  list.forEach((ev, idx)=>{
     const li = document.createElement('li');
     li.className = 'event' + (ev.tag==='stay' ? ' lodging' : '');
     li.innerHTML = `
@@ -658,10 +668,16 @@ function renderDay(dayKey){
         ${ev.note ? `<p>${ev.note}</p>` : ''}
       </div>
       <div class="item-actions">
+        <div class="move-group">
+          <button class="move-btn" data-dir="up" title="上に移動" aria-label="この予定を上に移動" ${idx===0?'disabled':''}>▲</button>
+          <button class="move-btn" data-dir="down" title="下に移動" aria-label="この予定を下に移動" ${idx===list.length-1?'disabled':''}>▼</button>
+        </div>
         <button class="edit-btn" title="編集" aria-label="この予定を編集">✎</button>
         <button class="del-btn" title="削除" aria-label="この予定を削除">×</button>
       </div>
     `;
+    li.querySelector('[data-dir="up"]').addEventListener('click', ()=>moveEvent(dayKey, ev.id, -1));
+    li.querySelector('[data-dir="down"]').addEventListener('click', ()=>moveEvent(dayKey, ev.id, 1));
     li.querySelector('.edit-btn').addEventListener('click', ()=>toggleForm(dayKey, true, ev.id));
     li.querySelector('.del-btn').addEventListener('click', ()=>removeEvent(dayKey, ev.id));
     ol.appendChild(li);
@@ -694,6 +710,23 @@ function updateMapLink(dayKey){
   if(waypoints.length) url += `&waypoints=${waypoints.join('|')}`;
   link.href = url;
   if(label) label.textContent = `本日のドライブルートを見る（${events[0].title}→${events[events.length-1].title}）`;
+}
+
+async function moveEvent(dayKey, id, delta){
+  const list = DATA[dayKey];
+  const idx = list.findIndex(e=>e.id===id);
+  const newIdx = idx + delta;
+  if(idx<0 || newIdx<0 || newIdx>=list.length) return;
+  const snapshot = list.slice();
+  const [item] = list.splice(idx, 1);
+  list.splice(newIdx, 0, item);
+  const who = myName();
+  const ok = await saveData(`並び替え${who?'('+who+')':''}: 「${item.title}」(${DAY_LABEL[dayKey]})`);
+  if(!ok){ DATA[dayKey] = snapshot; return; }
+  renderDay(dayKey);
+  updateMapLink(dayKey);
+  await loadHistory();
+  renderHistory();
 }
 
 async function removeEvent(dayKey, id){
