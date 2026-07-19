@@ -22,18 +22,18 @@
       "id": "mrqailshd8ujv"
     },
     {
-      "time": "14:00",
-      "tag": "move",
-      "title": "米沢 発",
-      "note": "山形経由で山寺方面へ。",
-      "id": "mrqailshpdb4v"
-    },
-    {
       "time": "13:15",
       "tag": "sight",
       "title": "上杉神社・松が岬公園",
       "note": "米沢城跡。上杉謙信・鷹山を祀る神社を散策（約45分）。",
       "id": "mrqailshrsddt"
+    },
+    {
+      "time": "14:00",
+      "tag": "move",
+      "title": "米沢 発",
+      "note": "山形経由で山寺方面へ。",
+      "id": "mrqailshpdb4v"
     },
     {
       "time": "15:15〜17:00",
