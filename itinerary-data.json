@@ -15,18 +15,18 @@
       "id": "mrqailsh28z1i"
     },
     {
-      "time": "12:00",
-      "tag": "meal",
-      "title": "米沢牛焼肉さかの",
-      "note": "米沢駅から車で約5分。米沢牛の焼肉ランチ。",
-      "id": "mrqailshd8ujv"
-    },
-    {
       "time": "13:15",
       "tag": "sight",
       "title": "上杉神社・松が岬公園",
       "note": "米沢城跡。上杉謙信・鷹山を祀る神社を散策（約45分）。",
       "id": "mrqailshrsddt"
+    },
+    {
+      "time": "12:00",
+      "tag": "meal",
+      "title": "米沢牛焼肉さかの",
+      "note": "米沢駅から車で約5分。米沢牛の焼肉ランチ。",
+      "id": "mrqailshd8ujv"
     },
     {
       "time": "14:00",
