@@ -29,18 +29,18 @@
       "id": "mrqailshrsddt"
     },
     {
-      "id": "msjfz7zq161lm",
-      "time": "13:00",
-      "tag": "shop",
-      "title": "高畠ワイナリー",
-      "note": "試飲もできるけど..."
-    },
-    {
       "time": "14:00",
       "tag": "move",
       "title": "米沢 発",
       "note": "山形経由で山寺方面へ。",
       "id": "mrqailshpdb4v"
+    },
+    {
+      "id": "msjfz7zq161lm",
+      "time": "13:00",
+      "tag": "shop",
+      "title": "高畠ワイナリー",
+      "note": "試飲もできるけど..."
     },
     {
       "id": "ms1t6fjecvhxx",
