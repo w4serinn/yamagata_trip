@@ -50,13 +50,6 @@
       "note": ""
     },
     {
-      "id": "msjgkghx03bbb",
-      "time": "14:15",
-      "tag": "sight",
-      "title": "仮)熊野大社",
-      "note": ""
-    },
-    {
       "id": "ms1t6fjecvhxx",
       "time": "15:00〜15:45",
       "tag": "sight",
@@ -79,6 +72,13 @@
     }
   ],
   "day2": [
+    {
+      "id": "msjheweaqjghx",
+      "time": "06:00",
+      "tag": "sight",
+      "title": "天童城跡",
+      "note": "起きれたら"
+    },
     {
       "time": "10:00",
       "tag": "move",
